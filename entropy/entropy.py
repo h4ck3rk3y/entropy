@@ -19,14 +19,14 @@ Options:
 """
 
 from docopt import docopt
-from pathlib import Path
+from pathlib import Path, PosixPath
 from datetime import datetime
 import configparser
 
 
-JOURNAL_PATH="~/.entropy/journal"
-STATUS_PATH="~/.entropy/status.txt"
-CONF="~/.entropy/entropy.conf"
+JOURNAL_PATH=Path.expanduser(PosixPath("~/.entropy/journal"))
+STATUS_PATH=Path.expanduser(PosixPath("~/.entropy/status.txt"))
+CONF=Path.expanduser(PosixPath("~/.entropy/entropy.conf"))
 
 SET_UNSET_DAYS_TO_BAD=True
 
