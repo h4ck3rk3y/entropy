@@ -20,26 +20,37 @@ Options:
 
 from docopt import docopt
 from pathlib import Path
-import datetime
+from datetime import datetime
+import configparser
 
 
 JOURNAL_PATH="~/.entropy/journal"
-STATUS_PATH="~/.entropy/status"
+STATUS_PATH="~/.entropy/status.txt"
+CONF="~/.entropy/entropy.conf"
+
+SET_UNSET_DAYS_TO_BAD=True
 
 __version__ = '0.1.0'
 
 
+def parse_conf():
+    config = configparser.ConfigParser()
+    config.read(CONF)
+    if config.has_section("DEFAULT"):
+        SET_UNSET_DAYS_TO_BAD = config["DEFAULT"].get(SET_UNSET_DAYS_TO_BAD, False)
+
 def initial_setup():
     Path(JOURNAL_PATH).mkdir(parents=True, exist_ok=True)
-    Path(STATUS_PATH).mkdir(parents=True, exist_ok=True)
 
 
-def create_current_year(path):
-    Path
+def create_today():
+    today = datetime.now()
+    Path(JOURNAL_PATH + "/" + today.year + "/" + today.month + "/" + today.day).mkdir(parents=True, exist_ok=True)
 
 
 def add_status_for_today(good=False):
-    pass
+    with open(STATUS_PATH, 'a') as status_file:
+        status_file.write("{0}={1}".format(datetime.today().strftime("%Y-%m-%d"), good))
 
 
 def handle_add_status(arguments):
@@ -81,6 +92,8 @@ def main():
     '''entropy helps you lower entropy in your life'''
     
     initial_setup()
+    parse_conf()
+
     arguments = docopt(__doc__, version=__version__)
 
     if arguments["journal"]:
