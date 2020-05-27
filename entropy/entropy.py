@@ -39,6 +39,7 @@ def parse_conf():
     if config.has_section("DEFAULT"):
         SET_UNSET_DAYS_TO_BAD = config["DEFAULT"].get(SET_UNSET_DAYS_TO_BAD, False)
 
+
 def initial_setup():
     Path(JOURNAL_PATH).mkdir(parents=True, exist_ok=True)
 
@@ -48,12 +49,26 @@ def create_today():
     Path(JOURNAL_PATH + "/" + today.year + "/" + today.month + "/" + today.day).mkdir(parents=True, exist_ok=True)
 
 
+def status_exists_for_date(date):
+    try:
+        with open(STATUS_PATH, 'r') as status_file:
+            config = configparser.ConfigParser()
+            config.read(status_file)
+            return config.has_option(None, date.strftime("%Y-%m-%d"))
+    except:
+        return False
+
 def add_status_for_today(good=False):
     with open(STATUS_PATH, 'a') as status_file:
-        status_file.write("{0}={1}".format(datetime.today().strftime("%Y-%m-%d"), good))
+        config = configparser.ConfigParser()
+        config.set(None, datetime.today().strftime("%Y-%m-%d"), str(good))
+        config.write(status_file)
 
 
 def handle_add_status(arguments):
+    if status_exists_for_date(datetime.today()):
+        print("You have already added a status for today")
+        return
     while True:
         response = input('Do you consider today succesful? [y/n]\n>')
         if response == 'y' or response == 'Y':
