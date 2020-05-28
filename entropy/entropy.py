@@ -33,11 +33,19 @@ SET_UNSET_DAYS_TO_BAD=True
 __version__ = '0.1.0'
 
 
+def today():
+    today = datetime.today()
+    return today.strftime("%Y-%m-%d")
+
 def parse_conf():
-    config = configparser.ConfigParser()
-    config.read(CONF)
-    if config.has_section("DEFAULT"):
-        SET_UNSET_DAYS_TO_BAD = config["DEFAULT"].get(SET_UNSET_DAYS_TO_BAD, False)
+    try:
+        with open(CONF, 'r') as conf_file:
+            config = configparser.ConfigParser()
+            config.read(conf_file)
+            if config.has_section("DEFAULT"):
+                SET_UNSET_DAYS_TO_BAD = config["DEFAULT"].get(SET_UNSET_DAYS_TO_BAD, False)
+    except:
+        print("config file doesnt exist at {}".format(CONF))
 
 
 def initial_setup():
@@ -45,23 +53,23 @@ def initial_setup():
 
 
 def create_today():
-    today = datetime.now()
-    Path(JOURNAL_PATH + "/" + today.year + "/" + today.month + "/" + today.day).mkdir(parents=True, exist_ok=True)
+    now = datetime.now()
+    Path(JOURNAL_PATH + "/" + now.year + "/" + now.month + "/" + now.day).mkdir(parents=True, exist_ok=True)
 
 
 def status_exists_for_date(date):
     try:
         with open(STATUS_PATH, 'r') as status_file:
             config = configparser.ConfigParser()
-            config.read(status_file)
-            return config.has_option(None, date.strftime("%Y-%m-%d"))
+            config.read_file(status_file)
+            return config.has_option(None, today())
     except:
         return False
 
 def add_status_for_today(good=False):
     with open(STATUS_PATH, 'a') as status_file:
         config = configparser.ConfigParser()
-        config.set(None, datetime.today().strftime("%Y-%m-%d"), str(good))
+        config.set(None, today(), str(good))
         config.write(status_file)
 
 
