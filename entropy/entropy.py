@@ -26,9 +26,6 @@ import configparser
 
 JOURNAL_PATH=Path.expanduser(PosixPath("~/.entropy/journal"))
 STATUS_PATH=Path.expanduser(PosixPath("~/.entropy/status.txt"))
-CONF=Path.expanduser(PosixPath("~/.entropy/entropy.conf"))
-
-SET_UNSET_DAYS_TO_BAD=True
 
 __version__ = '0.1.0'
 
@@ -37,22 +34,10 @@ def today():
     today = datetime.today()
     return today.strftime("%Y-%m-%d")
 
-def parse_conf():
-    with open(CONF, 'r') as conf_file:
-        config = configparser.ConfigParser()
-        config.read(conf_file)
-        if config.has_section("DEFAULT"):
-            SET_UNSET_DAYS_TO_BAD = config["DEFAULT"].get("SET_UNSET_DAYS_TO_BAD", False)
-
-
 
 def initial_setup():
     Path(JOURNAL_PATH).mkdir(parents=True, exist_ok=True)
-    if not Path(CONF).is_file():
-        with open(CONF, 'w') as config_file:
-            config = configparser.ConfigParser()
-            config.set(None, "SET_UNSET_DAYS_TO_BAD", "False")
-            config.write(config_file)
+    Path(STATUS_PATH).touch()
 
 
 def create_today():
@@ -61,13 +46,10 @@ def create_today():
 
 
 def status_exists_for_date(date):
-    try:
-        with open(STATUS_PATH, 'r') as status_file:
-            config = configparser.ConfigParser()
-            config.read_file(status_file)
-            return config.has_option(None, today())
-    except:
-        return False
+    with open(STATUS_PATH, 'r') as status_file:
+        config = configparser.ConfigParser()
+        config.read_file(status_file)
+        return config.has_option(None, today())
 
 def add_status_for_today(good=False):
     config = configparser.ConfigParser()
@@ -94,7 +76,10 @@ def handle_add_status(arguments):
             print('I didnt quite understand what you said')
 
 def handle_status_view(arguments):
-    pass
+    config = configparser.ConfigParser()
+    with open(STATUS_PATH, 'r') as status_file:
+        config.read(status_file)
+            
 
 def handle_view_journal(arguments):
     pass
@@ -120,7 +105,6 @@ def main():
     '''entropy helps you lower entropy in your life'''
     
     initial_setup()
-    parse_conf()
 
     arguments = docopt(__doc__, version=__version__)
 
