@@ -24,8 +24,8 @@ from datetime import datetime
 import configparser
 
 
-JOURNAL_PATH=Path.expanduser(PosixPath("~/.entropy/journal"))
-STATUS_PATH=Path.expanduser(PosixPath("~/.entropy/status.txt"))
+JOURNAL_PATH = Path.expanduser(PosixPath("~/.entropy/journal"))
+STATUS_PATH = Path.expanduser(PosixPath("~/.entropy/status.txt"))
 
 __version__ = '0.1.0'
 
@@ -42,7 +42,8 @@ def initial_setup():
 
 def create_today():
     now = datetime.now()
-    Path(JOURNAL_PATH + "/" + now.year + "/" + now.month + "/" + now.day).mkdir(parents=True, exist_ok=True)
+    Path(JOURNAL_PATH + "/" + now.year + "/" + now.month +
+         "/" + now.day).mkdir(parents=True, exist_ok=True)
 
 
 def status_exists_for_date(date):
@@ -50,6 +51,7 @@ def status_exists_for_date(date):
         config = configparser.ConfigParser()
         config.read_file(status_file)
         return config.has_option(None, today())
+
 
 def add_status_for_today(good=False):
     config = configparser.ConfigParser()
@@ -75,17 +77,20 @@ def handle_add_status(arguments):
         else:
             print('I didnt quite understand what you said')
 
+
 def handle_status_view(arguments):
     config = configparser.ConfigParser()
     with open(STATUS_PATH, 'r') as status_file:
         config.read(status_file)
-            
+
 
 def handle_view_journal(arguments):
     pass
 
+
 def handle_add_journal(arguments):
     pass
+
 
 def journal(arguments):
     if arguments["add"]:
@@ -103,7 +108,7 @@ def status(arguments):
 
 def main():
     '''entropy helps you lower entropy in your life'''
-    
+
     initial_setup()
 
     arguments = docopt(__doc__, version=__version__)
@@ -114,6 +119,7 @@ def main():
         status(arguments)
     else:
         print(__doc__)
+
 
 if __name__ == '__main__':
     main()
