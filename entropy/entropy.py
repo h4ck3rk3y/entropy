@@ -25,7 +25,7 @@ from pathlib import Path, PosixPath
 from datetime import datetime, timedelta, date
 import calendar
 import configparser
-import colorama
+from colorama import init, Fore, Back
 
 
 JOURNAL_PATH = Path.expanduser(PosixPath("~/.entropy/journal"))
@@ -35,7 +35,15 @@ __version__ = '0.1.0'
 
 
 def print_to_screen(status, wasted, well, none):
-    print(locals())
+    init()
+    for item in status:
+        if item[1] == 'True':
+            print(Fore.GREEN, "✓", end="")
+        elif item[1] == 'False':
+            print(Fore.RED, "X", end="")
+        elif item[1] == None:
+            print(Fore.WHITE, "-", end="")
+    print("")
 
 
 def today():
