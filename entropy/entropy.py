@@ -41,6 +41,10 @@ def yesterday():
     yesterday = datetime.today() - timedelta(days=1)
     return yesterday.strftime("%Y-%m-%d")
 
+def week():
+    today_ = datetime.today()
+    week = [(today_ + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(0 - today_.weekday(), 7 - today_.weekday())]
+    return week
 
 def initial_setup():
     Path(JOURNAL_PATH).mkdir(parents=True, exist_ok=True)
@@ -85,6 +89,23 @@ def handle_add_status(arguments):
             print('I didnt quite understand what you said')
 
 
+def get_statistics_for_timerange(duration, data):
+    status = []
+    wasted = 0
+    well = 0
+    none = 0
+    for day in duration:
+        if day in data:
+            if data[day]:
+                well+=1
+            else:
+                wasted+=1
+            status.append((day, data[day]))
+        else:
+            none+=1
+            status.append((day, None))
+    return status, wasted, well, none
+
 def handle_status_view(arguments):
     config = configparser.ConfigParser()
     with open(STATUS_PATH, 'r') as status_file:
@@ -106,23 +127,9 @@ def handle_status_view(arguments):
             else:
                 print("Yesterday was a failure")
         elif arguments["week"]:
-            days = config["DEFAULT"]._options()
-            today_ = datetime.today()
-            week = [(today_ + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(0 - today_.weekday(), 7 - today_.weekday())]
-            status = []
-            wasted = 0
-            well = 0
-            none = 0
-            for day in week:
-                if day in days:
-                    if days[day]:
-                        well+=1
-                    else:
-                        wasted+=1
-                    status.append((day, days[day]))
-                else:
-                    none+=1
-                    status.append((day, None))
+            data = config["DEFAULT"]._options()
+            status, wasted, well, none = get_statistics_for_timerange(week(), data)
+
 
 
 def handle_view_journal(arguments):
