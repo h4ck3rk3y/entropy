@@ -22,14 +22,20 @@ Options:
 
 from docopt import docopt
 from pathlib import Path, PosixPath
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
+import calendar
 import configparser
+import colorama
 
 
 JOURNAL_PATH = Path.expanduser(PosixPath("~/.entropy/journal"))
 STATUS_PATH = Path.expanduser(PosixPath("~/.entropy/status.txt"))
 
 __version__ = '0.1.0'
+
+
+def print_to_screen(status, wasted, well, none):
+    print(locals())
 
 
 def today():
@@ -41,10 +47,31 @@ def yesterday():
     yesterday = datetime.today() - timedelta(days=1)
     return yesterday.strftime("%Y-%m-%d")
 
+
 def week():
     today_ = datetime.today()
-    week = [(today_ + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(0 - today_.weekday(), 7 - today_.weekday())]
+    week = [(today_ + timedelta(days=i)).strftime("%Y-%m-%d")
+            for i in range(0 - today_.weekday(), 7 - today_.weekday())]
     return week
+
+
+def month():
+    today_ = datetime.today()
+    year_ = today_.year
+    month_ = today_.month
+    num_days = calendar.monthrange(year_, month_)[1]
+    days = [date(year_, month_, day) for day in range(1, num_days+1)]
+    return days
+
+
+def year():
+    today_ = datetime.today()
+    year_ = today_.year
+    day_of_year = today_.timetuple().tm_yday
+    days = [date(year_, 1, 1) + timedelta(days=day)
+            for day in range(1, day_of_year)]
+    return days
+
 
 def initial_setup():
     Path(JOURNAL_PATH).mkdir(parents=True, exist_ok=True)
@@ -95,19 +122,23 @@ def get_statistics_for_timerange(duration, data):
     well = 0
     none = 0
     for day in duration:
-        if day in data:
-            if data[day]:
-                well+=1
+        formatted_day = day.strftime("%Y-%m-%d")
+        if formatted_day in data:
+            if data[formatted_day]:
+                well += 1
             else:
-                wasted+=1
-            status.append((day, data[day]))
+                wasted += 1
+            status.append((formatted_day, data[formatted_day]))
         else:
-            none+=1
-            status.append((day, None))
+            none += 1
+            status.append((formatted_day, None))
     return status, wasted, well, none
+
 
 def handle_status_view(arguments):
     config = configparser.ConfigParser()
+    data = config["DEFAULT"]._options()
+    status, wasted, well, none = None, None, None, None
     with open(STATUS_PATH, 'r') as status_file:
         config.read_file(status_file)
         if arguments["today"]:
@@ -127,9 +158,20 @@ def handle_status_view(arguments):
             else:
                 print("Yesterday was a failure")
         elif arguments["week"]:
-            data = config["DEFAULT"]._options()
-            status, wasted, well, none = get_statistics_for_timerange(week(), data)
-
+            status, wasted, well, none = get_statistics_for_timerange(
+                week(), data)
+        elif arguments["month"]:
+            status, wasted, well, none = get_statistics_for_timerange(
+                month(), data)
+        elif arguments["year"]:
+            status, wasted, well, none = get_statistics_for_timerange(
+                year(), data)
+        elif arguments["life"]:
+            life = [datetime.strptime("%Y-%m-%d") for day in data]
+            status, wasted, well, none = get_statistics_for_timerange(
+                life, data)
+        if status:
+            print_to_screen(status, wasted, well, none)
 
 
 def handle_view_journal(arguments):
