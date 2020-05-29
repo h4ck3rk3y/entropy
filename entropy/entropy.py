@@ -167,7 +167,7 @@ def handle_status_view(arguments):
             status, wasted, well, none = get_statistics_for_timerange(
                 year(), data)
         elif arguments["life"]:
-            life = [datetime.strptime("%Y-%m-%d") for day in data]
+            life = [datetime.strptime(day, "%Y-%m-%d") for day in data]
             status, wasted, well, none = get_statistics_for_timerange(
                 life, data)
         if status:
