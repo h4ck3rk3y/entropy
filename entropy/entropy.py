@@ -44,6 +44,9 @@ def print_to_screen(status, wasted, well, none):
         elif item[1] == None:
             print(Fore.WHITE, "-", end="")
     print("")
+    print(Fore.CYAN, "You wasted {} day(s) and did well on {} day(s)".format(wasted, well))
+    if none:
+        print(Fore.WHITE, "We have no information for {} day(s)".format(none))
 
 
 def today():
@@ -132,7 +135,7 @@ def get_statistics_for_timerange(duration, data):
     for day in duration:
         formatted_day = day.strftime("%Y-%m-%d")
         if formatted_day in data:
-            if data[formatted_day]:
+            if data[formatted_day] == 'True':
                 well += 1
             else:
                 wasted += 1
