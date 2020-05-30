@@ -6,7 +6,7 @@ setup(
     long_description=open('README.md').read(),
     author='Gyanendra Mishra',
     author_email='anomaly.the@gmail.com',
-    licesne='MIT',
+    license='MIT',
     keywords=['entropy', 'productivity', 'journaling'],
     url='https://github.com/h4ck3rk3y/entropy',
     install_requires=[
