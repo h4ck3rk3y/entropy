@@ -1,8 +1,9 @@
 from colorama import Fore
-from time_to_object import get_message
 from pathlib import PosixPath, Path
 import configparser
-from date_utils import today, yesterday
+
+from .date_utils import today, yesterday
+from .time_to_object import get_message
 
 STATUS_PATH = Path.expanduser(PosixPath("~/.entropy/status.txt"))
 

@@ -1,7 +1,8 @@
 from pathlib import PosixPath, Path
 from colorama import Fore
-from date_utils import TODAY
-from file_utils import file_exists
+
+from .date_utils import TODAY
+from .file_utils import file_exists
 
 JOURNAL_PATH = Path.expanduser(PosixPath("~/.entropy/journal"))
 TODAYS_FOLDER_TO_SAVE = str(JOURNAL_PATH) + "/" + \

@@ -25,10 +25,11 @@ from docopt import docopt
 from pathlib import Path
 import configparser
 from colorama import init, Fore
-from date_utils import TODAY, YESTERDAY, week, month, year, life, parse_date
-from status import STATUS_PATH, print_to_screen, print_today, print_yesterday, print_one_date, status_exists_for_date, add_status_for_today, get_statistics_for_timerange
-from journal import QUESTIONS, JOURNAL_PATH, display_journal, get_journal_path, save_journal, journal_exists_for_date
-from file_utils import file_exists
+
+from .date_utils import TODAY, YESTERDAY, week, month, year, life, parse_date
+from .status import STATUS_PATH, print_to_screen, print_today, print_yesterday, print_one_date, status_exists_for_date, add_status_for_today, get_statistics_for_timerange
+from .journal import QUESTIONS, JOURNAL_PATH, display_journal, get_journal_path, save_journal, journal_exists_for_date
+from .file_utils import file_exists
 
 __version__ = '0.1.1'
 
