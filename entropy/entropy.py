@@ -33,6 +33,7 @@ __version__ = '0.1.0'
 
 
 def initial_setup():
+    init()
     Path(JOURNAL_PATH).mkdir(parents=True, exist_ok=True)
     Path(STATUS_PATH).touch()
 

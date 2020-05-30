@@ -1,5 +1,5 @@
 from pathlib import PosixPath, Path
-from colorama import Fore, init
+from colorama import Fore
 from date_utils import TODAY
 from file_utils import file_exits
 

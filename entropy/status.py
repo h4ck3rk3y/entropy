@@ -1,4 +1,4 @@
-from colorama import Fore, init
+from colorama import Fore
 from time_to_object import get_message
 from pathlib import PosixPath, Path
 import configparser
@@ -8,7 +8,6 @@ STATUS_PATH = Path.expanduser(PosixPath("~/.entropy/status.txt"))
 
 
 def print_to_screen(status, wasted, well, none):
-    init()
     for index, item in enumerate(status):
         if index and index % 31 == 0:
             print("")
