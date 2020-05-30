@@ -25,84 +25,17 @@ from pathlib import Path, PosixPath
 import calendar
 import configparser
 from colorama import init, Fore, Back
-from time_to_object import get_message
-from date_utils import *
-
-
-JOURNAL_PATH = Path.expanduser(PosixPath("~/.entropy/journal"))
-STATUS_PATH = Path.expanduser(PosixPath("~/.entropy/status.txt"))
-TODAYS_FOLDER_TO_SAVE = str(JOURNAL_PATH) + "/" + \
-    str(TODAY.year) + "/" + \
-    TODAY.strftime("%B")
-
-
-QUESTIONS = [
-    ("I am grateful for", 1),
-    ("What would make today great?", 3),
-    ("Daily affirmations. I am", 1),
-    ("Amazing thing that happened yesterday", 1)
-]
+from date_utils import TODAY, YESTERDAY, today, yesterday, week, month, year, life, parse_date
+from status import STATUS_PATH, print_to_screen, status_exists_for_date, add_status_for_today, get_statistics_for_timerange
+from journal import QUESTIONS, JOURNAL_PATH, display_journal, get_journal_path, save_journal
+from file_utils import file_exits
 
 __version__ = '0.1.0'
-
-
-def print_to_screen(status, wasted, well, none):
-    init()
-    for index, item in enumerate(status):
-        if index and index % 31 == 0:
-            print("")
-        if item[1] == 'True':
-            print(Fore.GREEN, "✓", end="")
-        elif item[1] == 'False':
-            print(Fore.RED, "X", end="")
-        elif item[1] == None:
-            print(Fore.WHITE, "-", end="")
-    print("")
-    if well and well > 1:
-        print(Fore.GREEN, "You did well on {} days".format(well))
-    elif well:
-        print(Fore.GREEN, "You did well on {} day".format(well))
-    if wasted and wasted > 1:
-        print(Fore.RED, "You wasted {} days".format(wasted))
-        print(Fore.MAGENTA, get_message(wasted), "in this time")
-    elif wasted:
-        print(Fore.RED, "You wasted {} day".format(wasted))
-        print(Fore.MAGENTA, get_message(wasted), "in this time")
-    else:
-        print(Fore.GREEN, "You have done well on all reported days!")
-    if none and none > 1:
-        print(Fore.WHITE, "We have no information for {} days".format(none))
-    elif none:
-        print(Fore.WHITE, "We have no information for {} day".format(none))
-
-
-def get_journal_path(journal_date):
-    journal_path = str(JOURNAL_PATH) + "/" + \
-        str(journal_date.year) + "/" + \
-        journal_date.strftime("%B") + \
-        "/" + journal_date.strftime("%Y-%m-%d") + ".txt"
-    return journal_path
 
 
 def initial_setup():
     Path(JOURNAL_PATH).mkdir(parents=True, exist_ok=True)
     Path(STATUS_PATH).touch()
-
-
-def status_exists_for_date(date):
-    with open(STATUS_PATH, 'r') as status_file:
-        config = configparser.ConfigParser()
-        config.read_file(status_file)
-        return config.has_option(None, today())
-
-
-def add_status_for_today(good=False):
-    config = configparser.ConfigParser()
-    with open(STATUS_PATH, 'r') as status_file:
-        config.read_file(status_file)
-    with open(STATUS_PATH, 'w') as status_file:
-        config.set("DEFAULT", today(), str(good))
-        config.write(status_file)
 
 
 def handle_add_status(arguments):
@@ -119,25 +52,6 @@ def handle_add_status(arguments):
             break
         else:
             print('I didnt quite understand what you said')
-
-
-def get_statistics_for_timerange(duration, data):
-    status = []
-    wasted = 0
-    well = 0
-    none = 0
-    for day in duration:
-        formatted_day = day.strftime("%Y-%m-%d")
-        if formatted_day in data:
-            if data[formatted_day] == 'True':
-                well += 1
-            else:
-                wasted += 1
-            status.append((formatted_day, data[formatted_day]))
-        else:
-            none += 1
-            status.append((formatted_day, None))
-    return status, wasted, well, none
 
 
 def handle_status_view(arguments):
@@ -172,20 +86,10 @@ def handle_status_view(arguments):
             status, wasted, well, none = get_statistics_for_timerange(
                 year(), data)
         elif arguments["life"]:
-            life = [datetime.strptime(day, "%Y-%m-%d") for day in data]
             status, wasted, well, none = get_statistics_for_timerange(
-                life, data)
+                life(data), data)
         if status:
             print_to_screen(status, wasted, well, none)
-
-
-def parse_date(input_date):
-    try:
-        date = datetime.strptime(input_date, "%Y-%m-%d")
-        return date
-    except:
-        print(Fore.RED, "Invalid, try something like entropy view journal YYYY-mm-dd")
-        return False
 
 
 def handle_view_journal(arguments):
@@ -193,52 +97,13 @@ def handle_view_journal(arguments):
     if arguments["today"]:
         journal_date = TODAY
     elif arguments["yesterday"]:
-        journal_date = TODAY - timedelta(days=1)
+        journal_date = YESTERDAY
     elif arguments["<date>"]:
         journal_date = parse_date(arguments["<date>"])
         if not journal_date:
+            print(Fore.RED, "Invalid, try something like entropy view journal YYYY-mm-dd")
             return
     display_journal(journal_date)
-
-
-def file_exits(path):
-    return Path(path).exists()
-
-
-def is_a_question(line):
-    for question_ in QUESTIONS:
-        question = question_[0]
-        if question in line:
-            return True
-    return False
-
-
-def display_journal(journal_date):
-    journal_path = get_journal_path(journal_date)
-    if not file_exits(journal_path):
-        print(Fore.RED, "Sorry we don't have an entry for this date")
-        return
-    with open(journal_path, 'r') as journal_file:
-        for line in journal_file.readlines():
-            if is_a_question(line):
-                print(Fore.BLUE, line, end="")
-            else:
-                print(Fore.GREEN, line, end="")
-
-
-def save_journal(journal, day=TODAY):
-    Path(TODAYS_FOLDER_TO_SAVE).mkdir(exist_ok=True, parents=True)
-    with open(get_journal_path(day), 'w') as journal_file:
-        for (question, responses) in journal:
-            print(question, file=journal_file)
-            if len(responses) > 1:
-                for index, response in enumerate(responses):
-                    print("  {}. ".format(index+1) +
-                          response, file=journal_file)
-            else:
-                print(responses[0], file=journal_file)
-    print(Fore.CYAN, "Journal entry saved at {}.\n Tweak it if you want to make edits".format(
-        get_journal_path(day)))
 
 
 def handle_add_journal(arguments):
@@ -262,14 +127,14 @@ def handle_add_journal(arguments):
     save_journal(journal)
 
 
-def journal(arguments):
+def handle_journal(arguments):
     if arguments["add"]:
         handle_add_journal(arguments)
     elif arguments["view"]:
         handle_view_journal(arguments)
 
 
-def status(arguments):
+def handle_status(arguments):
     if arguments["add"]:
         handle_add_status(arguments)
     else:
@@ -284,9 +149,9 @@ def main():
     arguments = docopt(__doc__, version=__version__)
 
     if arguments["journal"]:
-        journal(arguments)
+        handle_journal(arguments)
     elif arguments["status"]:
-        status(arguments)
+        handle_status(arguments)
     else:
         print(__doc__)
 

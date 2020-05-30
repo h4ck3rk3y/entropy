@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, date
 
 TODAY = datetime.today()
+YESTERDAY = TODAY - timedelta(days=1)
 
 
 def today():
@@ -8,8 +9,7 @@ def today():
 
 
 def yesterday():
-    yesterday = TODAY - timedelta(days=1)
-    return yesterday.strftime("%Y-%m-%d")
+    return YESTERDAY.strftime("%Y-%m-%d")
 
 
 def week():
@@ -34,3 +34,16 @@ def year():
     days = [date(year_, 1, 1) + timedelta(days=day)
             for day in range(1, day_of_year)]
     return days
+
+
+def life(data):
+    days = [datetime.strptime(day, "%Y-%m-%d") for day in data]
+    return days
+
+
+def parse_date(input_date):
+    try:
+        date = datetime.strptime(input_date, "%Y-%m-%d")
+        return date
+    except:
+        return False
