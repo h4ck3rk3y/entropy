@@ -4,7 +4,6 @@ in your life
 
 Usage:
     entropy journal add
-    entropy journal add yesterday
     entropy journal view today
     entropy journal view yesterday
     entropy journal view <date>
