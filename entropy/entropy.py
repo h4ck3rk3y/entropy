@@ -37,7 +37,9 @@ __version__ = '0.1.0'
 
 def print_to_screen(status, wasted, well, none):
     init()
-    for item in status:
+    for index, item in enumerate(status):
+        if index and index % 30 == 0:
+            print("")
         if item[1] == 'True':
             print(Fore.GREEN, "✓", end="")
         elif item[1] == 'False':
