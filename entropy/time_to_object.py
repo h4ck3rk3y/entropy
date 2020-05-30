@@ -10,9 +10,11 @@ time_to_object_map = {
     1209600: "You could have built Facebook",
     630720000: "You could have built the Taj Mahal",
     259200: "You could have reached the moon",
-    518400: "You could have written the The Strange Case of Docotor Jekyll and Mr Hyde",
+    4838400: "You could have built instagram",
+    518400: "You could have climbed Mt. Kilimanjaro",
     216000: "You could have written the The Boy in Striped Pajamas",
-    1814400: "You could have written A Christmas Carol",
+    3628800: "You could have written A Christmas Carol",
+    1814400: "You could have written A Clockwork Orange"
 }
 
 

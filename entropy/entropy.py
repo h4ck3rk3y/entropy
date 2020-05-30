@@ -56,7 +56,7 @@ def print_to_screen(status, wasted, well, none):
             print(Fore.RED, "You wasted {} days".format(wasted))
         else:
             print(Fore.RED, "You wasted {} day".format(wasted))
-        print(Fore.MAGENTA, get_message(wasted), "in the time you wasted")
+        print(Fore.MAGENTA, get_message(wasted), "in this time")
     if none:
         print(Fore.WHITE, "We have no information for {} day(s)".format(none))
 
