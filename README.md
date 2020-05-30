@@ -7,6 +7,11 @@ the natural state of entropy is to increase. we must fight against it. 💪
 entropy is a command line friend that helps you reduce entropy
 in your life
 
+
+## Demo
+
+![](https://i.imgur.com/InlyNci.gif)
+
 ## Installation
 
 ### 1: [PIP](https://pypi.python.org/pypi/entropy)

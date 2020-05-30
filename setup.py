@@ -1,7 +1,7 @@
 from setuptools import setup
 setup(
     name='entropy',
-    version='0.1.3',
+    version='0.1.4',
     description='entropy is a command line friend that helps you reduce entropy in your life',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
