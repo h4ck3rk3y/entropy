@@ -26,6 +26,7 @@ from datetime import datetime, timedelta, date
 import calendar
 import configparser
 from colorama import init, Fore, Back
+from time_to_object import get_message
 
 
 JOURNAL_PATH = Path.expanduser(PosixPath("~/.entropy/journal"))
@@ -44,7 +45,16 @@ def print_to_screen(status, wasted, well, none):
         elif item[1] == None:
             print(Fore.WHITE, "-", end="")
     print("")
-    print(Fore.CYAN, "You wasted {} day(s) and did well on {} day(s)".format(wasted, well))
+    if well and well > 1:
+        print(Fore.GREEN, "You did well on {} days".format(well))
+    elif well:
+        print(Fore.GREEN, "You did well on {} day".format(well))
+    if wasted:
+        if wasted > 1:
+            print(Fore.RED, "You wasted {} days".format(wasted))
+        else:
+            print(Fore.RED, "You wasted {} day".format(wasted))
+        print(Fore.MAGENTA, get_message(wasted), "in the time you wasted")
     if none:
         print(Fore.WHITE, "We have no information for {} day(s)".format(none))
 
