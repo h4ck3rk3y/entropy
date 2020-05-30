@@ -40,7 +40,7 @@ def initial_setup():
 
 def handle_add_status(arguments):
     if status_exists_for_date(TODAY):
-        print("You have already added a status for today")
+        print(Fore.RED, "You have already added a status for today")
         return
     while True:
         response = input('Do you consider today succesful? [y/n]\n>')
