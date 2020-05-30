@@ -1,9 +1,10 @@
 from setuptools import setup
 setup(
     name='entropy',
-    version='0.1.0',
+    version='0.1.1',
     description='entropy is a command line friend that helps you reduce entropy in your life',
     long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
     author='Gyanendra Mishra',
     author_email='anomaly.the@gmail.com',
     license='MIT',
