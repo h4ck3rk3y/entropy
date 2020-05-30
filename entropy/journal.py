@@ -43,6 +43,11 @@ def display_journal(journal_date):
                 print(Fore.GREEN, line, end="")
 
 
+def journal_exists_for_today():
+    journal_path = get_journal_path(TODAY)
+    return file_exists(journal_path)
+
+
 def is_a_question(line):
     for question_ in QUESTIONS:
         question = question_[0]
