@@ -8,12 +8,12 @@ Usage:
     entropy journal view yesterday
     entropy journal view <date>
     entropy status add
-    entropy status today
-    entropy status yesterday
-    entropy status week
-    entropy status month
-    entropy status year
-    entropy status life
+    entropy status view today
+    entropy status view yesterday
+    entropy status view week
+    entropy status view month
+    entropy status view year
+    entropy status view life
 
 Options:
     -h --help Show this screen
