@@ -31,7 +31,7 @@ from .status import STATUS_PATH, print_to_screen, print_today, print_yesterday, 
 from .journal import QUESTIONS, JOURNAL_PATH, display_journal, get_journal_path, save_journal, journal_exists_for_date
 from .file_utils import file_exists
 
-__version__ = '0.1.1'
+__version__ = '0.1.3'
 
 
 def initial_setup():
