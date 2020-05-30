@@ -22,14 +22,13 @@ Options:
 
 from docopt import docopt
 from pathlib import Path, PosixPath
-from datetime import datetime, timedelta, date
 import calendar
 import configparser
 from colorama import init, Fore, Back
 from time_to_object import get_message
+from date_utils import *
 
 
-TODAY = datetime.today()
 JOURNAL_PATH = Path.expanduser(PosixPath("~/.entropy/journal"))
 STATUS_PATH = Path.expanduser(PosixPath("~/.entropy/status.txt"))
 TODAYS_FOLDER_TO_SAVE = str(JOURNAL_PATH) + "/" + \
@@ -85,48 +84,9 @@ def get_journal_path(journal_date):
     return journal_path
 
 
-def today():
-    return TODAY.strftime("%Y-%m-%d")
-
-
-def yesterday():
-    yesterday = TODAY - timedelta(days=1)
-    return yesterday.strftime("%Y-%m-%d")
-
-
-def week():
-    today_ = TODAY
-    week = [(today_ + timedelta(days=i))
-            for i in range(0 - today_.weekday(), 7 - today_.weekday())]
-    return week
-
-
-def month():
-    today_ = TODAY
-    year_ = today_.year
-    month_ = today_.month
-    days = [date(year_, month_, day) for day in range(1, today_.day+1)]
-    return days
-
-
-def year():
-    today_ = TODAY
-    year_ = today_.year
-    day_of_year = today_.timetuple().tm_yday
-    days = [date(year_, 1, 1) + timedelta(days=day)
-            for day in range(1, day_of_year)]
-    return days
-
-
 def initial_setup():
     Path(JOURNAL_PATH).mkdir(parents=True, exist_ok=True)
     Path(STATUS_PATH).touch()
-
-
-def create_today():
-    now = datetime.now()
-    Path(JOURNAL_PATH + "/" + now.year + "/" + now.month +
-         "/" + now.day).mkdir(parents=True, exist_ok=True)
 
 
 def status_exists_for_date(date):
