@@ -1,9 +1,10 @@
 r"""
-entropy is a command friend that helps you reduce entropy
+entropy is a command line friend that helps you reduce entropy
 in your life
 
 Usage:
     entropy journal add
+    entropy journal add yesterday
     entropy journal view today
     entropy journal view yesterday
     entropy journal view <date>
