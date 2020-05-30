@@ -1,7 +1,7 @@
 from pathlib import PosixPath, Path
 from colorama import Fore
 from date_utils import TODAY
-from file_utils import file_exits
+from file_utils import file_exists
 
 JOURNAL_PATH = Path.expanduser(PosixPath("~/.entropy/journal"))
 TODAYS_FOLDER_TO_SAVE = str(JOURNAL_PATH) + "/" + \
@@ -32,7 +32,7 @@ def save_journal(journal, day=TODAY):
 
 def display_journal(journal_date):
     journal_path = get_journal_path(journal_date)
-    if not file_exits(journal_path):
+    if not file_exists(journal_path):
         print(Fore.RED, "Sorry we don't have an entry for this date")
         return
     with open(journal_path, 'r') as journal_file:
