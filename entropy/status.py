@@ -72,17 +72,17 @@ def add_status_for_today(good=False):
 
 
 def print_today(data):
-    print_today_yesterday(today(), data, "Today")
+    print_one_date(today(), data, "Today")
 
 
 def print_yesterday(data):
-    print_today_yesterday(yesterday(), data, "Yesterday")
+    print_one_date(yesterday(), data, "Yesterday")
 
 
-def print_today_yesterday(day, data, today_yesterday):
+def print_one_date(day, data, name):
     if day not in data:
-        print("{} isn't set".format(today_yesterday))
+        print("{} isn't set".format(name))
     elif data[day] == 'True':
-        print("{} was good".format(today_yesterday))
+        print("{} was good".format(name))
     else:
-        print("{} was a failure".format(today_yesterday))
+        print("{} was a failure".format(name))

@@ -31,16 +31,21 @@ def save_journal(journal, day=TODAY):
 
 
 def display_journal(journal_date):
-    journal_path = get_journal_path(journal_date)
-    if not file_exists(journal_path):
+    if not journal_exists_for_date(journal_date):
         print(Fore.RED, "Sorry we don't have an entry for this date")
         return
+    journal_path = get_journal_path(journal_date)
     with open(journal_path, 'r') as journal_file:
         for line in journal_file.readlines():
             if is_a_question(line):
                 print(Fore.BLUE, line, end="")
             else:
                 print(Fore.GREEN, line, end="")
+
+
+def journal_exists_for_date(day):
+    journal_path = get_journal_path(day)
+    return file_exists(journal_path)
 
 
 def is_a_question(line):
