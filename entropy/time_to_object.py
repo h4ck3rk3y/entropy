@@ -26,7 +26,3 @@ def get_message(wasted_days):
     if index - 1 >= 0:
         return second[index-1]
     return second[index]
-
-
-if __name__ == "__main__":
-    print(get_message(1))
