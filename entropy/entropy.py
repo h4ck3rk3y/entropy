@@ -26,7 +26,7 @@ import configparser
 from colorama import init, Fore
 from date_utils import TODAY, YESTERDAY, week, month, year, life, parse_date
 from status import STATUS_PATH, print_to_screen, print_today, print_yesterday, status_exists_for_date, add_status_for_today, get_statistics_for_timerange
-from journal import QUESTIONS, JOURNAL_PATH, display_journal, get_journal_path, save_journal, journal_exists_for_today
+from journal import QUESTIONS, JOURNAL_PATH, display_journal, get_journal_path, save_journal, journal_exists_for_date
 from file_utils import file_exists
 
 __version__ = '0.1.0'
@@ -42,7 +42,7 @@ def handle_add_status(arguments):
     if status_exists_for_date(TODAY):
         print(Fore.RED, "You have already added a status for today")
         return
-    if not journal_exists_for_today():
+    if not journal_exists_for_date(TODAY):
         print(Fore.YELLOW, "You forgot to add a journal entry this morning!")
     while True:
         response = input('Do you consider today succesful? [y/n]\n>')
