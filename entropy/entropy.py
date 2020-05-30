@@ -3,7 +3,7 @@ entropy is a command friend that helps you reduce entropy
 in your life
 
 Usage:
-    entropy journal add <filename>
+    entropy journal add
     entropy journal view today
     entropy journal view yesterday
     entropy journal view <date>
@@ -29,8 +29,20 @@ from colorama import init, Fore, Back
 from time_to_object import get_message
 
 
+TODAY = datetime.today()
 JOURNAL_PATH = Path.expanduser(PosixPath("~/.entropy/journal"))
 STATUS_PATH = Path.expanduser(PosixPath("~/.entropy/status.txt"))
+TODAYS_FOLDER_TO_SAVE = str(JOURNAL_PATH) + "/" + \
+    str(TODAY.year) + "/" + \
+    TODAY.strftime("%B")
+
+
+QUESTIONS = [
+    ("I am grateful for", 1),
+    ("What would make today great?", 3),
+    ("Daily affirmations. I am", 1),
+    ("Amazing thing that happened yesterday", 1)
+]
 
 __version__ = '0.1.0'
 
@@ -65,25 +77,30 @@ def print_to_screen(status, wasted, well, none):
         print(Fore.WHITE, "We have no information for {} day".format(none))
 
 
+def get_journal_path(journal_date):
+    journal_path = TODAYS_FOLDER_TO_SAVE + \
+        "/" + journal_date.strftime("%Y-%m-%d") + ".txt"
+    return journal_path
+
+
 def today():
-    today = datetime.today()
-    return today.strftime("%Y-%m-%d")
+    return TODAY.strftime("%Y-%m-%d")
 
 
 def yesterday():
-    yesterday = datetime.today() - timedelta(days=1)
+    yesterday = TODAY - timedelta(days=1)
     return yesterday.strftime("%Y-%m-%d")
 
 
 def week():
-    today_ = datetime.today()
+    today_ = TODAY
     week = [(today_ + timedelta(days=i))
             for i in range(0 - today_.weekday(), 7 - today_.weekday())]
     return week
 
 
 def month():
-    today_ = datetime.today()
+    today_ = TODAY
     year_ = today_.year
     month_ = today_.month
     days = [date(year_, month_, day) for day in range(1, today_.day+1)]
@@ -91,7 +108,7 @@ def month():
 
 
 def year():
-    today_ = datetime.today()
+    today_ = TODAY
     year_ = today_.year
     day_of_year = today_.timetuple().tm_yday
     days = [date(year_, 1, 1) + timedelta(days=day)
@@ -127,7 +144,7 @@ def add_status_for_today(good=False):
 
 
 def handle_add_status(arguments):
-    if status_exists_for_date(datetime.today()):
+    if status_exists_for_date(TODAY):
         print("You have already added a status for today")
         return
     while True:
@@ -200,12 +217,87 @@ def handle_status_view(arguments):
             print_to_screen(status, wasted, well, none)
 
 
+def parse_date(input_date):
+    try:
+        date = datetime.strptime(input_date, "%Y-%m-%d")
+        return date
+    except:
+        print(Fore.RED, "Invalid, try something like entropy view journal YYYY-mm-dd")
+        return False
+
+
 def handle_view_journal(arguments):
-    pass
+    journal_date = None
+    if arguments["today"]:
+        journal_date = TODAY
+    elif arguments["yesterday"]:
+        journal_date = TODAY - timedelta(days=1)
+    elif arguments["<date>"]:
+        journal_date = parse_date(arguments["<date>"])
+        if not journal_date:
+            return
+    display_journal(journal_date)
+
+
+def file_exits(path):
+    return Path(path).exists()
+
+
+def is_a_question(line):
+    for question_ in QUESTIONS:
+        question = question_[0]
+        if question in line:
+            return True
+    return False
+
+
+def display_journal(journal_date):
+    journal_path = get_journal_path(journal_date)
+    if not file_exits(journal_path):
+        print(Fore.RED, "Sorry we don't have an entry for this date")
+        return
+    with open(journal_path, 'r') as journal_file:
+        for line in journal_file.readlines():
+            if is_a_question(line):
+                print(Fore.BLUE, line, end="")
+            else:
+                print(Fore.GREEN, line, end="")
+
+
+def save_journal(journal, day=TODAY):
+    Path(TODAYS_FOLDER_TO_SAVE).mkdir(exist_ok=True, parents=True)
+    with open(get_journal_path(day), 'w') as journal_file:
+        for (question, responses) in journal:
+            print(question, file=journal_file)
+            if len(responses) > 1:
+                for index, response in enumerate(responses):
+                    print("  {}. ".format(index+1) +
+                          response, file=journal_file)
+            else:
+                print(responses[0], file=journal_file)
+    print(Fore.CYAN, "Journal entry saved at {}.\n Tweak it if you want to make edits".format(
+        get_journal_path(day)))
 
 
 def handle_add_journal(arguments):
-    pass
+    journal = []
+    if file_exits(get_journal_path(TODAY)):
+        print(Fore.RED, "Journal entry already exits at:\n {}.\n Please edit it to make changes.".format(
+            get_journal_path(TODAY)))
+        return
+    for item in QUESTIONS:
+        question = item[0]
+        times = item[1]
+        response = []
+        print(Fore.BLUE, question)
+        if times > 1:
+            print(Fore.YELLOW, "You will be asked to add {} points".format(times))
+            for time in range(times):
+                response.append(input(Fore.GREEN + "{}. ".format(time+1)))
+        else:
+            response.append(input(Fore.GREEN + "> "))
+        journal.append((question, response))
+    save_journal(journal)
 
 
 def journal(arguments):
@@ -230,7 +322,7 @@ def main():
     arguments = docopt(__doc__, version=__version__)
 
     if arguments["journal"]:
-        print(arguments)
+        journal(arguments)
     elif arguments["status"]:
         status(arguments)
     else:
