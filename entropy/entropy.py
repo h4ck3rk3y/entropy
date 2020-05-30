@@ -14,6 +14,7 @@ Usage:
     entropy status view month
     entropy status view year
     entropy status view life
+    entropy status view <date>
 
 Options:
     -h --help Show this screen
@@ -25,7 +26,7 @@ from pathlib import Path
 import configparser
 from colorama import init, Fore
 from date_utils import TODAY, YESTERDAY, week, month, year, life, parse_date
-from status import STATUS_PATH, print_to_screen, print_today, print_yesterday, status_exists_for_date, add_status_for_today, get_statistics_for_timerange
+from status import STATUS_PATH, print_to_screen, print_today, print_yesterday, print_one_date, status_exists_for_date, add_status_for_today, get_statistics_for_timerange
 from journal import QUESTIONS, JOURNAL_PATH, display_journal, get_journal_path, save_journal, journal_exists_for_date
 from file_utils import file_exists
 
@@ -66,6 +67,9 @@ def handle_status_view(arguments):
             print_today(data)
         elif arguments["yesterday"]:
             print_yesterday(data)
+        elif arguments["<date>"]:
+            day = parse_date(arguments["<date>"]).strftime("%Y-%m-%d")
+            print_one_date(day, data, day)
         elif arguments["week"]:
             status, wasted, well, none = get_statistics_for_timerange(
                 week(), data)
