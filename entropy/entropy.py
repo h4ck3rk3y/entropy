@@ -78,7 +78,9 @@ def print_to_screen(status, wasted, well, none):
 
 
 def get_journal_path(journal_date):
-    journal_path = TODAYS_FOLDER_TO_SAVE + \
+    journal_path = str(JOURNAL_PATH) + "/" + \
+        str(journal_date.year) + "/" + \
+        journal_date.strftime("%B") + \
         "/" + journal_date.strftime("%Y-%m-%d") + ".txt"
     return journal_path
 
