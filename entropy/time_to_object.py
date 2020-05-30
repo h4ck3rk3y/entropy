@@ -12,7 +12,6 @@ time_to_object_map = {
     259200: "You could have reached the moon",
     4838400: "You could have built instagram",
     518400: "You could have climbed Mt. Kilimanjaro",
-    216000: "You could have written the The Boy in Striped Pajamas",
     3628800: "You could have written A Christmas Carol",
     1814400: "You could have written A Clockwork Orange"
 }
@@ -23,7 +22,9 @@ def get_message(wasted_days):
     ordered_keys = sorted(time_to_object_map.keys())
     list_of_tuples = [(x, time_to_object_map[x]) for x in ordered_keys]
     first, second = zip(*list_of_tuples)
-    index = bisect.bisect_left(first, days_in_seconds)
+    index = bisect.bisect(first, days_in_seconds)
+    if index - 1 >= 0:
+        return second[index-1]
     return second[index]
 
 

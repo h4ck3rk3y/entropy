@@ -38,7 +38,7 @@ __version__ = '0.1.0'
 def print_to_screen(status, wasted, well, none):
     init()
     for index, item in enumerate(status):
-        if index and index % 30 == 0:
+        if index and index % 31 == 0:
             print("")
         if item[1] == 'True':
             print(Fore.GREEN, "✓", end="")
@@ -51,14 +51,18 @@ def print_to_screen(status, wasted, well, none):
         print(Fore.GREEN, "You did well on {} days".format(well))
     elif well:
         print(Fore.GREEN, "You did well on {} day".format(well))
-    if wasted:
-        if wasted > 1:
-            print(Fore.RED, "You wasted {} days".format(wasted))
-        else:
-            print(Fore.RED, "You wasted {} day".format(wasted))
+    if wasted and wasted > 1:
+        print(Fore.RED, "You wasted {} days".format(wasted))
         print(Fore.MAGENTA, get_message(wasted), "in this time")
-    if none:
-        print(Fore.WHITE, "We have no information for {} day(s)".format(none))
+    elif wasted:
+        print(Fore.RED, "You wasted {} day".format(wasted))
+        print(Fore.MAGENTA, get_message(wasted), "in this time")
+    else:
+        print(Fore.GREEN, "You have done well on all reported days!")
+    if none and none > 1:
+        print(Fore.WHITE, "We have no information for {} days".format(none))
+    elif none:
+        print(Fore.WHITE, "We have no information for {} day".format(none))
 
 
 def today():
@@ -82,8 +86,7 @@ def month():
     today_ = datetime.today()
     year_ = today_.year
     month_ = today_.month
-    num_days = calendar.monthrange(year_, month_)[1]
-    days = [date(year_, month_, day) for day in range(1, num_days+1)]
+    days = [date(year_, month_, day) for day in range(1, today_.day+1)]
     return days
 
 
@@ -160,23 +163,23 @@ def get_statistics_for_timerange(duration, data):
 
 def handle_status_view(arguments):
     config = configparser.ConfigParser()
-    data = config["DEFAULT"]._options()
     status, wasted, well, none = None, None, None, None
     with open(STATUS_PATH, 'r') as status_file:
         config.read_file(status_file)
+        data = config["DEFAULT"]._options()
         if arguments["today"]:
-            today_ = config.getboolean("DEFAULT", today())
-            if today_ is None:
+            today_ = today()
+            if today_ not in data:
                 print("Today isn't set")
-            elif today_ is True:
+            elif data[today_] == 'True':
                 print("Today was good")
             else:
                 print("Today was a failure")
         elif arguments["yesterday"]:
-            yesterday_ = config.getboolean("DEFAULT", yesterday())
-            if yesterday_ is None:
+            yesterday_ = yesterday()
+            if yesterday_ not in data:
                 print("Yesterday isn't set")
-            elif yesterday_ is True:
+            elif data[yesterday_] == 'True':
                 print("Yesterday was good")
             else:
                 print("Yesterday was a failure")
