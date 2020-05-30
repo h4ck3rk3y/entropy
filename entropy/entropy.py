@@ -71,7 +71,7 @@ def yesterday():
 
 def week():
     today_ = datetime.today()
-    week = [(today_ + timedelta(days=i)).strftime("%Y-%m-%d")
+    week = [(today_ + timedelta(days=i))
             for i in range(0 - today_.weekday(), 7 - today_.weekday())]
     return week
 
