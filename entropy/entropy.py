@@ -21,14 +21,13 @@ Options:
 """
 
 from docopt import docopt
-from pathlib import Path, PosixPath
-import calendar
+from pathlib import Path
 import configparser
-from colorama import init, Fore, Back
-from date_utils import TODAY, YESTERDAY, today, yesterday, week, month, year, life, parse_date
-from status import STATUS_PATH, print_to_screen, status_exists_for_date, add_status_for_today, get_statistics_for_timerange
+from colorama import init, Fore
+from date_utils import TODAY, YESTERDAY, week, month, year, life, parse_date
+from status import STATUS_PATH, print_to_screen, print_today, print_yesterday, status_exists_for_date, add_status_for_today, get_statistics_for_timerange
 from journal import QUESTIONS, JOURNAL_PATH, display_journal, get_journal_path, save_journal
-from file_utils import file_exits
+from file_utils import file_exists
 
 __version__ = '0.1.0'
 
@@ -61,21 +60,9 @@ def handle_status_view(arguments):
         config.read_file(status_file)
         data = config["DEFAULT"]._options()
         if arguments["today"]:
-            today_ = today()
-            if today_ not in data:
-                print("Today isn't set")
-            elif data[today_] == 'True':
-                print("Today was good")
-            else:
-                print("Today was a failure")
+            print_today(data)
         elif arguments["yesterday"]:
-            yesterday_ = yesterday()
-            if yesterday_ not in data:
-                print("Yesterday isn't set")
-            elif data[yesterday_] == 'True':
-                print("Yesterday was good")
-            else:
-                print("Yesterday was a failure")
+            print_yesterday(data)
         elif arguments["week"]:
             status, wasted, well, none = get_statistics_for_timerange(
                 week(), data)
@@ -108,7 +95,7 @@ def handle_view_journal(arguments):
 
 def handle_add_journal(arguments):
     journal = []
-    if file_exits(get_journal_path(TODAY)):
+    if file_exists(get_journal_path(TODAY)):
         print(Fore.RED, "Journal entry already exits at:\n {}.\n Please edit it to make changes.".format(
             get_journal_path(TODAY)))
         return

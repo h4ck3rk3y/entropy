@@ -1,8 +1,8 @@
 from colorama import Fore, init
 from time_to_object import get_message
 from pathlib import PosixPath, Path
-from config import configparser
-from date_utils import today
+import configparser
+from date_utils import today, yesterday
 
 STATUS_PATH = Path.expanduser(PosixPath("~/.entropy/status.txt"))
 
@@ -70,3 +70,20 @@ def add_status_for_today(good=False):
     with open(STATUS_PATH, 'w') as status_file:
         config.set("DEFAULT", today(), str(good))
         config.write(status_file)
+
+
+def print_today(data):
+    print_today_yesterday(today(), data, "Today")
+
+
+def print_yesterday(data):
+    print_today_yesterday(yesterday(), data, "Yesterday")
+
+
+def print_today_yesterday(day, data, today_yesterday):
+    if day not in data:
+        print("{} isn't set".format(today_yesterday))
+    elif data[day] == 'True':
+        print("{} was good".format(today_yesterday))
+    else:
+        print("{} was a failure".format(today_yesterday))
