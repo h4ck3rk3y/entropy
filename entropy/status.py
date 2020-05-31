@@ -1,11 +1,11 @@
 from colorama import Fore
-from pathlib import PosixPath, Path
+from pathlib import Path
 import configparser
 
 from .date_utils import today, yesterday
 from .time_to_object import get_message
 
-STATUS_PATH = Path.expanduser(PosixPath("~/.entropy/status.txt"))
+STATUS_PATH = Path.expanduser(Path("~/.entropy/status.txt"))
 
 
 def print_to_screen(status, wasted, well, none):
