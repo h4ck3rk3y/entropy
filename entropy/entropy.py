@@ -69,7 +69,12 @@ def handle_status_view(arguments):
         elif arguments["yesterday"]:
             print_yesterday(data)
         elif arguments["<date>"]:
-            day = parse_date(arguments["<date>"]).strftime("%Y-%m-%d")
+            day = parse_date(arguments["<date>"])
+            if not day:
+                print(
+                    Fore.RED, "Invalid, try something like entropy view journal YYYY-mm-dd")
+                return
+            day = day.strftime("%Y-%m-%d")
             print_one_date(day, data, day)
         elif arguments["week"]:
             status, wasted, well, none = get_statistics_for_timerange(
