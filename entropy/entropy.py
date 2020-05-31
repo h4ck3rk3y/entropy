@@ -31,7 +31,7 @@ from .status import STATUS_PATH, print_to_screen, print_today, print_yesterday, 
 from .journal import QUESTIONS, JOURNAL_PATH, display_journal, get_journal_path, save_journal, journal_exists_for_date
 from .file_utils import file_exists
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
 
 def initial_setup():
@@ -69,7 +69,12 @@ def handle_status_view(arguments):
         elif arguments["yesterday"]:
             print_yesterday(data)
         elif arguments["<date>"]:
-            day = parse_date(arguments["<date>"]).strftime("%Y-%m-%d")
+            day = parse_date(arguments["<date>"])
+            if not day:
+                print(
+                    Fore.RED, "Invalid, try something like entropy view journal YYYY-mm-dd")
+                return
+            day = day.strftime("%Y-%m-%d")
             print_one_date(day, data, day)
         elif arguments["week"]:
             status, wasted, well, none = get_statistics_for_timerange(

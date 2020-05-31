@@ -1,10 +1,10 @@
-from pathlib import PosixPath, Path
+from pathlib import Path
 from colorama import Fore
 
 from .date_utils import TODAY
 from .file_utils import file_exists
 
-JOURNAL_PATH = Path.expanduser(PosixPath("~/.entropy/journal"))
+JOURNAL_PATH = Path.expanduser(Path("~/.entropy/journal"))
 TODAYS_FOLDER_TO_SAVE = str(JOURNAL_PATH) + "/" + \
     str(TODAY.year) + "/" + \
     TODAY.strftime("%B")
