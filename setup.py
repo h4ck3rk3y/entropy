@@ -3,7 +3,7 @@ setup(
     name='entropy',
     version='0.1.5',
     description='entropy is a command line friend that helps you reduce entropy in your life',
-    long_description=open('README.md').read(),
+    long_description=open('README.md',encoding='UTF-8').read(),
     long_description_content_type='text/markdown',
     author='Gyanendra Mishra',
     author_email='anomaly.the@gmail.com',
